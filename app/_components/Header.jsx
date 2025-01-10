@@ -78,16 +78,19 @@
 // }
 
 // export default Header
+
 "use client";
 import { Button } from "@/components/ui/button";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 
 function Header() {
   const { data } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false); // state for mobile menu
+  const [dropdownOpen, setDropdownOpen] = useState(false); // state for dropdown visibility
+  const dropdownRef = useRef(null); // ref to handle click outside dropdown
 
   useEffect(() => {
     console.log(data);
@@ -97,6 +100,26 @@ function Header() {
   const closeMenu = () => {
     setIsMenuOpen(false);
   };
+
+  // Toggle dropdown visibility
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+
+  // Close dropdown if click happens outside the dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="p-2 shadow-sm flex justify-between">
@@ -115,12 +138,6 @@ function Header() {
           >
             Services
           </Link>
-          {/* <Link
-            href={"/search/Repair"}
-            className="hover:scale-105 hover:text-primary cursor-pointer"
-          >
-            About Us
-          </Link> */}
         </div>
       </div>
 
@@ -134,13 +151,29 @@ function Header() {
                 width={40}
                 height={40}
                 className="rounded-full cursor-pointer"
+                onClick={toggleDropdown} // Toggle dropdown on profile image click
               />
-              <div className="absolute right-0 top-10 bg-white shadow-lg p-4">
-                <Link href={"/mybooking"}>My Booking</Link>
-                <div>
-                  <Button onClick={() => signOut()}>Logout</Button>
+              {dropdownOpen && (
+                <div
+                  ref={dropdownRef}
+                  className="absolute right-0 top-10 bg-white shadow-lg p-4"
+                >
+                  <Link
+                    href={"/mybooking"}
+                    className="text-sm mb-4 block" // Add margin bottom for spacing
+                  >
+                    My Bookings
+                  </Link>
+                  <div>
+                    <Button
+                      onClick={() => signOut()}
+                      className="text-sm py-1 px-5" // Reduce padding for smaller button size
+                    >
+                      Logout
+                    </Button>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           ) : (
             <Button onClick={() => signIn("descope")}>Login / Sign Up</Button>
@@ -186,13 +219,6 @@ function Header() {
               >
                 Services
               </Link>
-              {/* <Link
-                href={"/search/Repair"}
-                onClick={closeMenu}
-                className="block p-4 hover:scale-105 hover:text-primary cursor-pointer"
-              >
-                About Us
-              </Link> */}
             </div>
           )}
         </div>
