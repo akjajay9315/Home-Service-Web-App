@@ -83,23 +83,20 @@ import { Button } from "@/components/ui/button";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 
 function Header() {
   const { data } = useSession();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // state for mobile menu
 
   useEffect(() => {
     console.log(data);
   }, [data]);
+
+  // Close the mobile menu on link click
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
 
   return (
     <div className="p-2 shadow-sm flex justify-between">
@@ -118,78 +115,87 @@ function Header() {
           >
             Services
           </Link>
-          <Link
+          {/* <Link
             href={"/search/Repair"}
             className="hover:scale-105 hover:text-primary cursor-pointer"
           >
             About Us
-          </Link>
-        </div>
-
-        {/* Hamburger Icon for mobile */}
-        <div className="md:hidden  mt-8">
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="flex flex-col justify-center items-center space-y-1"
-          >
-            {/* Hamburger icon */}
-            <div className="w-6 h-1 bg-black"></div>
-            <div className="w-6 h-1 bg-black"></div>
-            <div className="w-6 h-1 bg-black"></div>
-          </button>
+          </Link> */}
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      {isMenuOpen && (
-        <div className="md:hidden absolute top-16 left-0 w-full bg-white shadow-lg">
-          <Link
-            href={"/"}
-            className="block p-4 hover:scale-105 hover:text-primary cursor-pointer"
-          >
-            Home
-          </Link>
-          <Link
-            href={"/search/Repair"}
-            className="block p-4 hover:scale-105 hover:text-primary cursor-pointer"
-          >
-            Services
-          </Link>
-          <Link
-            href={"/search/Repair"}
-            className="block p-4 hover:scale-105 hover:text-primary cursor-pointer"
-          >
-            About Us
-          </Link>
-        </div>
-      )}
-
       <div>
-        {data?.user ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+        <div>
+          {data?.user ? (
+            <div className="relative">
               <Image
                 src={data?.user?.image}
                 alt="user"
                 width={40}
                 height={40}
-                className="rounded-full"
+                className="rounded-full cursor-pointer"
               />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <div className="absolute right-0 top-10 bg-white shadow-lg p-4">
                 <Link href={"/mybooking"}>My Booking</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => signOut()}>
-                Logout
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ) : (
-          <Button onClick={() => signIn("descope")}>Login / Sign Up</Button>
-        )}
+                <div>
+                  <Button onClick={() => signOut()}>Logout</Button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <Button onClick={() => signIn("descope")}>Login / Sign Up</Button>
+          )}
+        </div>
+
+        <div>
+          {/* Hamburger Icon for mobile */}
+          <div className="md:hidden mt-6">
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="flex flex-col justify-center items-center space-y-1"
+            >
+              {/* Hamburger icon */}
+              <div className="w-6 h-1 bg-black"></div>
+              <div className="w-6 h-1 bg-black"></div>
+              <div className="w-6 h-1 bg-black"></div>
+            </button>
+          </div>
+
+          {/* Mobile Menu */}
+          {isMenuOpen && (
+            <div className="md:hidden absolute top-16 left-0 w-full bg-white shadow-lg">
+              {/* Close button for mobile menu */}
+              <button
+                onClick={() => setIsMenuOpen(false)}
+                className="absolute top-4 right-4 z-100 text-xl text-gray-500"
+              >
+                ✖
+              </button>
+
+              <Link
+                href={"/"}
+                onClick={closeMenu}
+                className="block p-4 hover:scale-105 hover:text-primary cursor-pointer"
+              >
+                Home
+              </Link>
+              <Link
+                href={"/search/Repair"}
+                onClick={closeMenu}
+                className="block p-4 hover:scale-105 hover:text-primary cursor-pointer"
+              >
+                Services
+              </Link>
+              {/* <Link
+                href={"/search/Repair"}
+                onClick={closeMenu}
+                className="block p-4 hover:scale-105 hover:text-primary cursor-pointer"
+              >
+                About Us
+              </Link> */}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
