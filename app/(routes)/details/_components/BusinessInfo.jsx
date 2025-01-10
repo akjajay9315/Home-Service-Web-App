@@ -24,7 +24,7 @@ function BusinessInfo({business}) {
         <Mail/>
         {business?.email}</h2>
       </div>
-      <div className='flex flex-col gap-5 items-end'>
+      <div className='flex flex-col gap-5 items-start'>
         <Button><Share/></Button>
         <h2 className='flex gap-2 text-xl text-primary'><User/> {business.contactPerson} </h2>
         <h2 className='flex gap-2 text-xl text-gray-500'><Clock/> Available 8:00 AM to 10:PM </h2>
