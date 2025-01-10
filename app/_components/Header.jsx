@@ -127,7 +127,7 @@ function Header() {
         </div>
 
         {/* Hamburger Icon for mobile */}
-        <div className="md:hidden">
+        <div className="md:hidden  mt-8">
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="flex flex-col justify-center items-center space-y-1"
